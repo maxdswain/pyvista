@@ -100,6 +100,7 @@ extensions = [
     'sphinx_toolbox.more_autodoc.autonamedtuple',
     'sphinxext.opengraph',
     'sphinx_sitemap',
+    'vtk_xref',
 ]
 
 # Configuration of pyvista.ext.coverage
@@ -226,6 +227,7 @@ nitpick_ignore_regex = [
     #
     # PyVista TypeVars and TypeAliases
     (r'py:.*', '.*ColorLike'),
+    (r'py:.*', '.*ColormapOptions'),
     (r'py:.*', '.*ArrayLike'),
     (r'py:.*', '.*MatrixLike'),
     (r'py:.*', '.*VectorLike'),
@@ -292,16 +294,17 @@ nitpick_ignore_regex = [
     (r'py:.*', 'principal_axes'),  # Valid ref, but is not linked correctly in some wrapped cases
     (r'py:.*', 'axes_enabled'),  # Valid ref, but is not linked correctly in some wrapped cases
     (r'py:.*', '.*lookup_table_ndarray'),
-    (r'py:.*', 'colors.Colormap'),
+    (r'py:.*', '.*colors.Colormap'),
     (r'py:.*', 'colors.ListedColormap'),
     (r'py:.*', '.*CellQualityInfo'),
     (r'py:.*', 'cycler.Cycler'),
     (r'py:.*', 'pyvista.PVDDataSet'),
-    (r'py:.*', 'ScalarBarArgs'),
-    (r'py:.*', 'Silhouette'),
+    (r'py:.*', 'ScalarBarParams'),
+    (r'py:.*', 'SilhouetteParams'),
     (r'py:.*', 'BackfaceParams'),
     (r'py:.*', 'CullingOptions'),
     (r'py:.*', 'OpacityOptions'),
+    (r'py:.*', 'StyleOptions'),
     (r'py:.*', 'FontFamilyOptions'),
     (r'py:.*', 'HorizontalOptions'),
     (r'py:.*', 'VerticalOptions'),
@@ -493,10 +496,12 @@ sphinx_gallery_conf = {
     'backreferences_dir': None,
     # Modules for which function level galleries are created.  In
     'doc_module': 'pyvista',
+    'reference_url': {'pyvista': None},  # Add hyperlinks inside code blocks to pyvista methods
     'image_scrapers': (DynamicScraper(), 'matplotlib'),
     'first_notebook_cell': '%matplotlib inline',
     'reset_modules': (reset_pyvista,),
     'reset_modules_order': 'both',
+    'junit': str(Path('sphinx-gallery') / 'junit-results.xml'),
 }
 
 suppress_warnings = ['config.cache']

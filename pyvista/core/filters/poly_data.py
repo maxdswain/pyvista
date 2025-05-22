@@ -358,17 +358,15 @@ class PolyDataFilters(DataSetFilters):
     ):
         """Append one or more PolyData into this one.
 
-        Under the hood, the VTK `vtkAppendPolyDataFilter
-        <https://vtk.org/doc/nightly/html/classvtkAppendPolyData.html#details>`_ filter is used to perform the
-        append operation.
+        Under the hood, the VTK :vtk:`vtkAppendPolyData`
+        filter is used to perform the append operation.
 
         .. versionadded:: 0.40.0
 
         .. note::
-            As stated in the VTK documentation of `vtkAppendPolyDataFilter
-            <https://vtk.org/doc/nightly/html/classvtkAppendPolyData.html#details>`_,
-            point and cell data are added to the output PolyData **only** if they are present across **all**
-            input PolyData.
+            As stated in the VTK documentation of :vtk:`vtkAppendPolyData`,
+            point and cell data are added to the output PolyData **only** if they
+            are present across **all** input PolyData.
 
         .. seealso::
             :func:`pyvista.PolyDataFilters.merge`
@@ -447,8 +445,8 @@ class PolyDataFilters(DataSetFilters):
 
         .. versionchanged:: 0.39.0
             Before version ``0.39.0``, if all input datasets were of type :class:`pyvista.PolyData`,
-            the VTK ``vtkAppendPolyDataFilter`` and ``vtkCleanPolyData`` filters were used to perform merging.
-            Otherwise, :func:`DataSetFilters.merge`, which uses the VTK ``vtkAppendFilter`` filter,
+            the VTK :vtk:`vtkAppendPolyData` and :vtk:`vtkCleanPolyData` filters were used to perform merging.
+            Otherwise, :func:`DataSetFilters.merge`, which uses the VTK :vtk:`vtkAppendFilter` filter,
             was called.
             To enhance performance and coherence with merging operations available for other datasets in pyvista,
             the merging operation has been delegated in ``0.39.0`` to :func:`DataSetFilters.merge` only,
@@ -924,8 +922,7 @@ class PolyDataFilters(DataSetFilters):
         more akin to a low pass filter where undesirable high frequency features
         are removed.
 
-        This PyVista filter uses the VTK `vtkWindowedSincPolyDataFilter
-        <https://vtk.org/doc/nightly/html/classvtkWindowedSincPolyDataFilter.html>`_
+        This PyVista filter uses the VTK :vtk:`vtkWindowedSincPolyDataFilter`
         filter.
 
         Parameters
@@ -1164,7 +1161,7 @@ class PolyDataFilters(DataSetFilters):
     ):
         """Reduce the number of lines in a polyline mesh.
 
-        This filter uses ``vtkDecimatePolylineFilter``.
+        This filter uses :vtk:`vtkDecimatePolylineFilter`.
 
         .. versionadded:: 0.45.0
 
@@ -1192,7 +1189,7 @@ class PolyDataFilters(DataSetFilters):
 
         Warnings
         --------
-        From ``vtkDecimatePolylineFilter`` documentation: this algorithm is a very
+        From :vtk:`vtkDecimatePolylineFilter` documentation: this algorithm is a very
         simple implementation that overlooks some potential complexities.
         For example, if a vertex is multiply connected, meaning that it is
         used by multiple distinct polylines, then the extra topological
@@ -1380,9 +1377,9 @@ class PolyDataFilters(DataSetFilters):
 
         Uses one of the following vtk subdivision filters to subdivide a mesh:
 
-        * ``vtkButterflySubdivisionFilter``
-        * ``vtkLoopSubdivisionFilter``
-        * ``vtkLinearSubdivisionFilter``
+        * :vtk:`vtkButterflySubdivisionFilter`
+        * :vtk:`vtkLoopSubdivisionFilter`
+        * :vtk:`vtkLinearSubdivisionFilter`
 
         Linear subdivision results in the fastest mesh subdivision,
         but it does not smooth mesh edges, but rather splits each
@@ -1603,7 +1600,7 @@ class PolyDataFilters(DataSetFilters):
         boundary_weight: float = 1.0,
         enable_all_attribute_error: bool = False,
     ):
-        """Reduce the number of triangles in a triangular mesh using ``vtkQuadricDecimation``.
+        """Reduce the number of triangles in a triangular mesh using :vtk:`vtkQuadricDecimation`.
 
         .. versionchanged:: 0.45
           ``scalars``, ``vectors``, ``normals``, ``tcoords`` and ``tensors`` are now disabled by default.
@@ -2070,7 +2067,7 @@ class PolyDataFilters(DataSetFilters):
     def fill_holes(
         self, hole_size, inplace: bool = False, progress_bar: bool = False
     ):  # pragma: no cover
-        """Fill holes in a pyvista.PolyData or vtk.vtkPolyData object.
+        """Fill holes in a :class:`pyvista.PolyData` or :vtk:`vtkPolyData` object.
 
         Holes are identified by locating boundary edges, linking them
         together into loops, and then triangulating the resulting
@@ -2239,7 +2236,7 @@ class PolyDataFilters(DataSetFilters):
 
         This will add an array titled ``'vtkOriginalPointIds'`` of the input
         mesh's point ids to the output mesh. The default behavior of the
-        underlying ``vtkDijkstraGraphGeodesicPath`` filter is that the
+        underlying :vtk:`vtkDijkstraGraphGeodesicPath` filter is that the
         geodesic path is reversed in the resulting mesh. This is overridden
         in PyVista by default.
 
@@ -2379,8 +2376,13 @@ class PolyDataFilters(DataSetFilters):
         del sizes
         return distance
 
-    def ray_trace(
-        self, origin, end_point, first_point: bool = False, plot: bool = False, off_screen=None
+    def ray_trace(  # type: ignore[misc]
+        self: PolyData,
+        origin,
+        end_point,
+        first_point: bool = False,
+        plot: bool = False,
+        off_screen=None,
     ):
         """Perform a single ray trace calculation.
 
@@ -2440,7 +2442,7 @@ class PolyDataFilters(DataSetFilters):
         """
         points = _vtk.vtkPoints()
         cell_ids = _vtk.vtkIdList()
-        self.obbTree.IntersectWithLine(np.array(origin), np.array(end_point), points, cell_ids)  # type: ignore[attr-defined]
+        self.obbTree.IntersectWithLine(np.array(origin), np.array(end_point), points, cell_ids)
 
         intersection_points = _vtk.vtk_to_numpy(points.GetData())
         has_intersection = intersection_points.shape[0] >= 1
@@ -2455,7 +2457,7 @@ class PolyDataFilters(DataSetFilters):
 
         if plot:
             plotter = pyvista.Plotter(off_screen=off_screen)
-            plotter.add_mesh(self, label='Test Mesh')  # type: ignore[arg-type]
+            plotter.add_mesh(self, label='Test Mesh')
             segment = np.array([origin, end_point])
             plotter.add_lines(segment, 'b', label='Ray Segment')
             plotter.add_mesh(intersection_points, 'r', point_size=10, label='Intersection Points')
@@ -2465,8 +2467,8 @@ class PolyDataFilters(DataSetFilters):
 
         return intersection_points, intersection_cells
 
-    def multi_ray_trace(
-        self,
+    def multi_ray_trace(  # type:ignore[misc]
+        self: PolyData,
         origins,
         directions,
         first_point: bool = False,
@@ -2537,7 +2539,7 @@ class PolyDataFilters(DataSetFilters):
         'Rays intersected at (0.499, 0.000, 0.000), (0.000, 0.497, 0.000), (0.000, 0.000, 0.500)'
 
         """
-        if not self.is_all_triangles:  # type: ignore[attr-defined]
+        if not self.is_all_triangles:
             msg = 'Input mesh for multi_ray_trace must be all triangles.'
             raise NotAllTrianglesError(msg)
 
@@ -2556,7 +2558,7 @@ class PolyDataFilters(DataSetFilters):
 
         origins = np.asarray(origins)
         directions = np.asarray(directions)
-        tmesh = trimesh.Trimesh(self.points, self.regular_faces)  # type: ignore[attr-defined]
+        tmesh = trimesh.Trimesh(self.points, self.regular_faces)
         locations, index_ray, index_tri = tmesh.ray.intersects_location(
             origins,
             directions,
@@ -2581,14 +2583,14 @@ class PolyDataFilters(DataSetFilters):
                 keepdims=True,
             )
 
-            origin_to_centre_vectors = self.center - origins_retry  # type: ignore[attr-defined] # shape (n_retry, 3)
+            origin_to_centre_vectors = self.center - origins_retry  # shape (n_retry, 3)
             origin_to_centre_lengths = np.linalg.norm(
                 origin_to_centre_vectors,
                 axis=-1,
                 keepdims=True,
             )
             second_points = origins_retry + unit_directions * (
-                origin_to_centre_lengths + self.length  # type: ignore[attr-defined]
+                origin_to_centre_lengths + self.length
             )
 
             for id_r, origin, second_point in zip(retry_ray_indices, origins_retry, second_points):
@@ -3770,8 +3772,7 @@ class PolyDataFilters(DataSetFilters):
         filter to fragment the input into triangles and lines prior to
         running this filter.)
 
-        This filter implements `vtkStripper
-        <https://vtk.org/doc/nightly/html/classvtkStripper.html>`_
+        This filter implements :vtk:`vtkStripper`.
 
         Parameters
         ----------
@@ -3900,12 +3901,10 @@ class PolyDataFilters(DataSetFilters):
 
         Notes
         -----
-        Due to the nature of the `vtk.vtkCollisionDetectionFilter
-        <https://vtk.org/doc/nightly/html/classvtkCollisionDetectionFilter.html>`_,
+        Due to the nature of the :vtk:`vtkCollisionDetectionFilter`,
         repeated uses of this method will be slower that using the
-        ``vtk.vtkCollisionDetectionFilter`` directly.  The first
-        update of the filter creates two instances of `vtkOBBTree
-        <https://vtk.org/doc/nightly/html/classvtkOBBTree.html>`_,
+        :vtk:`vtkCollisionDetectionFilter` directly. The first
+        update of the filter creates two instances of `:vtk:`vtkOBBTree`,
         which can be subsequently updated by modifying the transform or
         matrix of the input meshes.
 
@@ -4012,13 +4011,12 @@ class PolyDataFilters(DataSetFilters):
     ):
         """Generate filled contours.
 
-        Generates filled contours for vtkPolyData. Filled contours are
+        Generates filled contours for :vtk:`vtkPolyData`. Filled contours are
         bands of cells that all have the same cell scalar value, and can
         therefore be colored the same. The method is also referred to as
         filled contour generation.
 
-        This filter implements `vtkBandedPolyDataContourFilter
-        <https://vtk.org/doc/nightly/html/classvtkBandedPolyDataContourFilter.html>`_.
+        This filter implements :vtk:`vtkBandedPolyDataContourFilter`.
 
         Parameters
         ----------
@@ -4369,8 +4367,7 @@ class PolyDataFilters(DataSetFilters):
         or resample from the polylines (using a user-specified
         resolution).
 
-        This filter implements `vtkRuledSurfaceFilter
-        <https://vtk.org/doc/nightly/html/classvtkRuledSurfaceFilter.html>`_.
+        This filter implements :vtk:`vtkRuledSurfaceFilter`.
 
         Parameters
         ----------

@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from pyvista.jupyter import JupyterBackendOptions
 
     from ._typing import ColorLike
+    from ._typing import ColormapOptions
 
 
 def _set_plot_theme_from_env() -> None:
@@ -1448,7 +1449,7 @@ class _TrameConfig(_ThemeConfig):
         service = os.environ.get('JUPYTERHUB_SERVICE_PREFIX', '')
         prefix = os.environ.get('PYVISTA_TRAME_SERVER_PROXY_PREFIX', '/proxy/')
         if service and not prefix.startswith('http'):  # pragma: no cover
-            self._server_proxy_prefix = os.path.join(service, prefix.lstrip('/'))  # noqa: PTH118
+            self._server_proxy_prefix = str(Path(service) / prefix.lstrip('/'))
             self._server_proxy_enabled = True
         else:
             self._server_proxy_prefix = prefix
@@ -1789,7 +1790,7 @@ class Theme(_ThemeConfig):
         self._window_size = [1024, 768]
         self._image_scale = 1
         self._font = _Font()
-        self._cmap = 'viridis'
+        self._cmap: ColormapOptions = 'viridis'
         self._color = Color('white')
         self._color_cycler = None
         self._nan_color = Color('darkgray')
@@ -2317,12 +2318,11 @@ class Theme(_ThemeConfig):
         self._font = config
 
     @property
-    def cmap(self):  # numpydoc ignore=RT01
+    def cmap(self) -> ColormapOptions:  # numpydoc ignore=RT01
         """Return or set the default colormap of pyvista.
 
-        See available Matplotlib colormaps.  Only applicable for when
-        displaying ``scalars``.  If ``colorcet`` or ``cmocean`` are
-        installed, their colormaps can be specified by name.
+        See :ref:`named_colormaps` for supported colormaps.
+        Only applicable when displaying ``scalars``.
 
         You can also specify a list of colors to override an existing
         colormap with a custom one.  For example, to create a three
@@ -2339,11 +2339,8 @@ class Theme(_ThemeConfig):
         return self._cmap
 
     @cmap.setter
-    def cmap(self, cmap):
-        out = get_cmap_safe(cmap)  # for validation
-        if out is None:
-            msg = f'Invalid color map {cmap}'  # type: ignore[unreachable]
-            raise ValueError(msg)
+    def cmap(self, cmap: ColormapOptions):
+        get_cmap_safe(cmap)  # for validation
         self._cmap = cmap
 
     @property
@@ -2838,10 +2835,10 @@ class Theme(_ThemeConfig):
         Must be one of the following strings, which are mapped to the
         following VTK volume mappers.
 
-        * ``'fixed_point'`` : ``vtk.vtkFixedPointVolumeRayCastMapper``
-        * ``'gpu'`` : ``vtk.vtkGPUVolumeRayCastMapper``
-        * ``'open_gl'`` : ``vtk.vtkOpenGLGPUVolumeRayCastMapper``
-        * ``'smart'`` : ``vtk.vtkSmartVolumeMapper``
+        * ``'fixed_point'`` : :vtk:`vtkFixedPointVolumeRayCastMapper`
+        * ``'gpu'`` : :vtk:`vtkGPUVolumeRayCastMapper`
+        * ``'open_gl'`` : :vtk:`vtkOpenGLGPUVolumeRayCastMapper`
+        * ``'smart'`` : :vtk:`vtkSmartVolumeMapper`
 
         Examples
         --------
